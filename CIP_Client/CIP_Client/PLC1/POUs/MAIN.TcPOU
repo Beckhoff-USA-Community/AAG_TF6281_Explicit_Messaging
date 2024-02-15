@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{3cede1a2-b51a-40dc-8ef9-feea4f37dd90}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+    sDevSTate : STRING;
+    iSampleToRun : UINT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[sDevSTate := F_ScannerDevStateToString(IO.ScannerDevState);
+
+CASE iSampleToRun OF
+    0:
+        PRG_SimpleExample();
+    1:
+        PRG_ExtendedExample();
+	2:
+		PRG_KepwareExample();
+END_CASE
+]]></ST>
+    </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="28" Count="6" />
+      <LineId Id="41" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_CheckIsArraySymbol" Id="{fd4981a9-65d4-4598-983c-280485c47d3b}" SpecialFunc="None">
+    <Declaration><![CDATA[//Check if the symbol string is an array, i.e. contains "[ ]"
+FUNCTION F_CheckIsArraySymbol : BOOL
+VAR_INPUT
+    sSymbolName : STRING;
+END_VAR
+VAR
+    iOpenBrackLocation : INT;
+    iClosedBracketLocation : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[iOpenBrackLocation := FIND(sSymbolName, '[');
+iClosedBracketLocation := FIND(sSymbolName, ']');
+
+IF iOpenBrackLocation <> 0 AND iClosedBracketLocation > iOpenBrackLocation THEN
+    F_CheckIsArraySymbol := TRUE;
+
+ELSE
+    F_CheckIsArraySymbol := FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="F_CheckIsArraySymbol">
+      <LineId Id="39" Count="7" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

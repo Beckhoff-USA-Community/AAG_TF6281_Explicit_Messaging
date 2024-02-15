@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_GetArrayIndexValue" Id="{de7e8664-765a-4a27-8e32-10931f3fabfc}" SpecialFunc="None">
+    <Declaration><![CDATA[//Given a symbol string like "ETHIP.arData[10]".
+//Return the value bewteen "[]" i.e. 10.
+FUNCTION F_GetArrayIndexValue : DINT
+VAR_INPUT
+    sSymbolName : STRING;
+END_VAR
+VAR
+    iOpenBrackLocation : INT;
+    iClosedBracketLocation : INT;
+    iNumOfCharsInIndex : INT;
+    sIndex : STRING;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[iOpenBrackLocation := FIND(sSymbolName, '[');
+iClosedBracketLocation := FIND(sSymbolName, ']');
+
+IF iOpenBrackLocation <> 0 AND iClosedBracketLocation > iOpenBrackLocation THEN
+    iNumOfCharsInIndex := (iClosedBracketLocation - iOpenBrackLocation) - 1;
+
+    sIndex := MID(STR := sSymbolName, LEN := iNumOfCharsInIndex, POS := iOpenBrackLocation + 1);
+
+    F_GetArrayIndexValue := TO_DINT(sIndex);
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="F_GetArrayIndexValue">
+      <LineId Id="53" Count="9" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_ReplaceArrayIndexWithAsterisk" Id="{354832fc-3849-4bc8-b03f-eab8c9a602a9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_ReplaceArrayIndexWithAsterisk : STRING
+VAR_INPUT
+    sSymbolName : STRING;
+END_VAR
+VAR
+    iOpenBrackLocation : INT;
+    iClosedBracketLocation : INT;
+    iNumOfCharsInIndex : INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[iOpenBrackLocation := FIND(sSymbolName, '[');
+iClosedBracketLocation := FIND(sSymbolName, ']');
+
+IF iOpenBrackLocation <> 0 AND iClosedBracketLocation > iOpenBrackLocation THEN
+    iNumOfCharsInIndex := (iClosedBracketLocation - iOpenBrackLocation) - 1;
+    F_ReplaceArrayIndexWithAsterisk := REPLACE(STR1 := sSymbolName, STR2 := '*', L := iNumOfCharsInIndex, P := iOpenBrackLocation + 1);
+ELSE
+    F_ReplaceArrayIndexWithAsterisk := sSymbolName;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="F_ReplaceArrayIndexWithAsterisk">
+      <LineId Id="41" Count="7" />
+      <LineId Id="20" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

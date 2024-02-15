@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_SimpleExample" Id="{c9c2d5b0-2045-4f4e-a26e-4e246478d4f3}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_SimpleExample
+VAR
+    fbRead : FB_CIP_DATA_TABLE_RDWR;
+    sReadResult : STRING; //result of last read
+
+    tonDelay : TON;
+    fbWrite : FB_CIP_DATA_TABLE_RDWR;
+    sWriteResult : STRING;
+
+    iStep : UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE iStep OF
+
+    0: //Read
+        fbRead(sNetId := F_CreateAmsNetId(IO.ScannerAmsNetID), //AMS Net ID of the TwinCAT EIP Scanner 
+            sIPv4Addr := IP_Addresses.CompactLogix_1769_L16ER, //IP address of the target CPU
+            bExecute := TRUE,
+            bDataTableWrite := FALSE, //FALSE = Read
+            sSrcElementName := 'Outputs', //Name of the controller tag on the AB PLC
+            sDstElementName := 'ETHIP.PLC1_Outputs', //Name of the TwinCAT variable from the "ETHIP" GVL list
+            nNumberOfElements := 1, //Number of elements
+            nLocalIndex := 0, //For ARRAYs the start index has to be set to indicate from which ARRAY index the data should be taken (local system)
+            nRemoteIndex := 0, //For ARRAYs the start index has to be set to indicate from which ARRAY index the data should be taken (remote system)
+            nSessionTimeoutMSec := 30000, //Timeout for the session
+            nCmdTimeoutMSec := 7500, //Timeout for the command; 
+            bRackComm := TRUE, //TRUE if the CPU is modular, i.e. a CPU with a rack design, for example a CompactLogix
+            nPort := 1, //Port number of the CPU (usually 1)
+            nSlot := 0, //Slot that the CPU resides in	
+            bBusy =>,
+            bError =>,
+            nErrId =>);
+
+        IF NOT fbRead.bBusy THEN
+            fbRead(bExecute := FALSE);
+            sReadResult := F_GET_ETHERNETIP_ERROR_TEXT(fbRead.nErrId);
+            iStep := 10;
+        END_IF
+
+    10: //Delay timmer for simulation purposes
+        tonDelay(IN := TRUE, PT := T#500MS);
+
+        IF tonDelay.Q THEN
+            tonDelay(IN := FALSE);
+            iStep := 20;
+        END_IF
+
+    20: //Generate some data
+        ETHIP.PLC1_Inputs._DINT := ETHIP.PLC1_Outputs._DINT + 1;
+        ETHIP.PLC1_Inputs._INT := ETHIP.PLC1_Outputs._INT + 1;
+        ETHIP.PLC1_Inputs._REAL := ETHIP.PLC1_Outputs._REAL + 1.1;
+        ETHIP.PLC1_Inputs._STRING := STRING_TO_RSL5KSTRING(in := CONCAT('Simple Example:', TO_STRING(ETHIP.PLC1_Outputs._DINT)));
+        iStep := 30;
+
+    30: //Write
+        fbWrite(sNetId := F_CreateAmsNetId(IO.ScannerAmsNetID), //AMS Net ID of the TwinCAT EIP Scanner 
+            sIPv4Addr := IP_Addresses.CompactLogix_1769_L16ER, //IP address of the target CPU
+            bExecute := TRUE,
+            bDataTableWrite := TRUE, //TRUE = Write
+            sSrcElementName := 'ETHIP.PLC1_Inputs', //Name of the TwinCAT variable from the "ETHIP" GVL list
+            sDstElementName := 'Inputs', //Name of the controller tag on the AB PLC
+            nNumberOfElements := 1, //Number of elements
+            nLocalIndex := 0, //For ARRAYs the start index has to be set to indicate from which ARRAY index the data should be taken (local system)
+            nRemoteIndex := 0, //For ARRAYs the start index has to be set to indicate from which ARRAY index the data should be taken (remote system)
+            nSessionTimeoutMSec := 30000, // Timeout for the session
+            nCmdTimeoutMSec := 7500, // Timeout for the command; 
+            bRackComm := TRUE, //TRUE if the CPU is modular, i.e. a CPU with a rack design, for example a CompactLogix
+            nPort := 1, //Port number of the CPU (usually 1)
+            nSlot := 0, //Slot that the CPU resides in	
+            bBusy =>,
+            bError =>,
+            nErrId =>);
+
+        IF NOT fbWrite.bBusy THEN
+            fbWrite(bExecute := FALSE);
+            sWriteResult := F_GET_ETHERNETIP_ERROR_TEXT(fbRead.nErrId);
+            iStep := 40;
+        END_IF
+
+    40: //Delay timmer for simulation purposes
+        tonDelay(IN := TRUE, PT := T#500MS);
+
+        IF tonDelay.Q THEN
+            tonDelay(IN := FALSE);
+            iStep := 0;
+        END_IF
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_SimpleExample">
+      <LineId Id="122" Count="74" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

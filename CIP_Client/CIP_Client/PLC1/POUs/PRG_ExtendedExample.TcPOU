@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_ExtendedExample" Id="{7c36d68d-d56a-4717-bcd3-0b880ed631da}" SpecialFunc="None">
+    <Declaration><![CDATA[//Example based on array of strucutres
+PROGRAM PRG_ExtendedExample
+VAR
+    //An instance of FB_CIP_Client for each PLC.
+    //FB_CIP_Client is just a wrapper function block of "FB_CIP_DATA_TABLE_RDWR" 
+    arPLC : ARRAY[0..1] OF FB_CIP_Client;
+
+    iStep : UDINT := 0;
+
+    SetSourceError : BOOL;
+    SetSourceErrorID : UDINT;
+    SetSourceErrorTxt : STRING;
+
+    SetReadDestError : BOOL;
+    SetReadDestErrorID : UDINT;
+    SetReadDestErrorTxt : STRING;
+
+    tonIdel : TON;
+
+    WriteError : BOOL;
+    WriteErrorTxt : STRING;
+
+    ReadError : BOOL;
+    ReadErrorTxt : STRING;
+
+    sTemp : STRING;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+CASE iStep OF
+    0: //Set the function block parameters	
+        arPLC[0].NetId := F_CreateAmsNetId(IO.ScannerAmsNetID);
+        arPLC[0].IPv4Addr := IP_Addresses.CompactLogix_1769_L16ER;
+        arPLC[0].RackComm := TRUE;
+        arPLC[0].Port := 1;
+        arPLC[0].Slot := 1;
+        iStep := 10;
+
+    10: //Set the write parameters
+        IF arPLC[0].SetWriteSource(pSymbol := ETHIP.arPLC_Inputs[0],
+            Error => SetSourceError,
+            ErrorID => SetSourceErrorID,
+            ErrorTxt => SetSourceErrorTxt)
+            THEN
+            arPLC[0].NumberOfElementsToWrite := 1;
+            arPLC[0].WriteDestination := 'Inputs';
+            arPLC[0].RemoteIndexWrite := 0;
+
+            iStep := 20;
+        END_IF
+
+    20: //Set the Read parameters
+        IF arPLC[0].SetReadDest(pSymbol := ETHIP.arPLC_Outputs[0],
+            Error => SetReadDestError,
+            ErrorID => SetReadDestErrorID,
+            ErrorTxt => SetReadDestErrorTxt)
+            THEN
+            arPLC[0].ReadSource := 'Outputs';
+            arPLC[0].NumberOfElementsToRead := 1;
+            arPLC[0].RemoteIndexRead := 0;
+            iStep := 30;
+        END_IF
+
+    30: //Cycle bewteen writting and reading
+
+        //Write
+        IF arPLC[0].Write(Error => WriteError, ErrorTxt => WriteErrorTxt) THEN
+            ETHIP.arPLC_Inputs[0]._DINT := ETHIP.arPLC_Outputs[0]._DINT + 1;
+            ETHIP.arPLC_Inputs[0]._INT := ETHIP.arPLC_Outputs[0]._INT + 1;
+            ETHIP.arPLC_Inputs[0]._REAL := ETHIP.arPLC_Outputs[0]._REAL + 1.1;
+            ETHIP.arPLC_Inputs[0]._STRING := STRING_TO_RSL5KSTRING(in := CONCAT('Extended Example:', TO_STRING(ETHIP.arPLC_Outputs[0]._DINT)));
+            iStep := 40;
+        END_IF
+
+    40: //Delay timmer - just for simulation
+        tonIdel(IN := TRUE, PT := T#500MS);
+
+        IF tonIdel.Q THEN
+            tonIdel(IN := FALSE);
+            iStep := 50;
+        END_IF
+
+    50: //Read	
+        IF arPLC[0].Read(Error => ReadError, ErrorTxt => ReadErrorTxt) THEN
+            iStep := 60;
+            sTemp := RSL5KSTRING_TO_STRING(in := ETHIP.arPLC_Outputs[0]._STRING);
+        END_IF
+
+    60: //Delay timmer - just for simulation
+        tonIdel(IN := TRUE, PT := T#500MS);
+
+        IF tonIdel.Q THEN
+            tonIdel(IN := FALSE);
+            iStep := 30;
+        END_IF
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_ExtendedExample">
+      <LineId Id="173" Count="67" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,725 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CIP_Client" Id="{c8947925-6176-46e6-9ea6-0a2e7c7c2b35}" SpecialFunc="None">
+    <Declaration><![CDATA[//Wrapper function block for "FB_CIP_DATA_TABLE_RDWR"
+FUNCTION_BLOCK FB_CIP_Client
+VAR
+    _NetID : T_AmsNetID; //AMS Net ID of the TwinCAT EIP Scanner            			
+    _IPv4Addr : STRING := '172.16.17.1'; //IP address of the target CPU
+    _Slot : BYTE := 1; //Slot that the CPU resides in	
+    _RackComm : BOOL := TRUE; //TRUE if the CPU is modular, i.e. a CPU with a rack design, for example a CompactLogix
+    _Port : BYTE := 1; //Port number of the CPU (usually 1)
+
+    _SessionTimeoutMSec : DWORD := 30000; // Timeout for the session
+    _CmdTimeoutMSec : DWORD := 7500; // Timeout for the command; 
+
+    //Write
+    _WriteSourceSymbol : STRING(82); //Name of the variable from the "ETHIP" GVL list
+    _NumberOfElementsToWrite : WORD := 1; //To write a complete UDT (structure) this should be 1
+    _LocalIndexWrite : WORD := 0; //To write a complete UDT (structure) this should be 0
+
+    _WriteDestination : STRING(82); //Name of the tag on the AB PLC
+    _RemoteIndexWrite : WORD := 0; //To write a complete UDT (structure) this should be 0
+
+    //Read
+    _ReadSource : STRING(82); //Name of the tag on the AB PLC
+    _NumberOfElementsToRead : WORD := 1; //To Read a complete UDT (structure) this should be 1	
+    _LocalIndexRead : WORD := 0;
+    _RemoteIndexRead : WORD := 0;
+
+    _ReadDstSymbol : STRING(82); //Name of the variable from the "ETHIP" GVL List
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[;]]></ST>
+    </Implementation>
+    <Property Name="CmdTimeoutMSec" Id="{117e75bb-b01d-4b56-9521-a9a36af2c214}">
+      <Declaration><![CDATA[PROPERTY CmdTimeoutMSec : DWORD]]></Declaration>
+      <Get Name="Get" Id="{509f7602-6773-4206-92eb-ae8b4640090d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CmdTimeoutMSec:=_CmdTimeoutMSec;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0855de02-4e25-451d-ac87-36faa19cf989}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_CmdTimeoutMSec:=CmdTimeoutMSec;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="IPv4Addr" Id="{0a247c7a-cdae-47b3-bf15-0c6c0a391da2}">
+      <Declaration><![CDATA[//IP address of the target CPU
+PROPERTY IPv4Addr : STRING]]></Declaration>
+      <Get Name="Get" Id="{ec60fcf1-6886-4490-acc0-19825b6984b9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IPv4Addr:=_IPv4Addr;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{8d4b1a23-cde2-4372-bce4-5ecbe0a920de}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_IPv4Addr:=IPv4Addr;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LocalIndexRead" Id="{e95465cc-077a-4128-847c-4a3bab6c6529}">
+      <Declaration><![CDATA[//To write a complete UDT (structure) this should be 0
+PROPERTY LocalIndexRead : WORD]]></Declaration>
+      <Get Name="Get" Id="{1202db41-9bf6-43af-bb1d-6598d8fe6886}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LocalIndexRead:=_LocalIndexRead;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{e918789e-5e62-4145-a056-caaea388667b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_LocalIndexRead:=LocalIndexRead;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LocalIndexWrite" Id="{f2888e16-07d5-427e-baec-16b4d9ebf095}">
+      <Declaration><![CDATA[//To write a complete UDT (structure) this should be 0
+PROPERTY LocalIndexWrite : WORD]]></Declaration>
+      <Get Name="Get" Id="{73177c32-0849-4541-aa75-699cd06a416e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{01f1cb81-901b-40d4-8c43-5e9a4f8138a1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="NetId" Id="{80211a11-98f5-4979-9898-8cc46a8dbd3a}">
+      <Declaration><![CDATA[//AmsNetId of the EIP Scanner.	    
+PROPERTY NetId : T_AmsNetID]]></Declaration>
+      <Get Name="Get" Id="{9042072a-195b-4d26-9f98-57c5d928396b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[NetId:=_NetID;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{beadc677-7751-4636-847f-29720fe2b55d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_NetID:=NetId;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="NumberOfElementsToRead" Id="{80688fa1-6d20-4e1f-ab12-38f0bb06eddd}">
+      <Declaration><![CDATA[PROPERTY NumberOfElementsToRead : WORD]]></Declaration>
+      <Get Name="Get" Id="{1076286e-a769-477f-97c9-0df44666b65d}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[NumberOfElementsToRead:=_NumberOfElementsToRead;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{019b4776-fe14-4464-a87d-b485547e3339}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_NumberOfElementsToRead:=NumberOfElementsToRead;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="NumberOfElementsToWrite" Id="{382b285e-4661-438d-8c0b-eeb8257203c6}">
+      <Declaration><![CDATA[//To write a complete UDT (structure) this should be 1.
+PROPERTY NumberOfElementsToWrite : WORD]]></Declaration>
+      <Get Name="Get" Id="{e8221a61-ac92-43b0-9b0b-569b7dadf4ff}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[NumberOfElementsToWrite:=_NumberOfElementsToWrite;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{926c625f-35a7-4676-a31f-c33057b7931b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_NumberOfElementsToWrite:=NumberOfElementsToWrite;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Port" Id="{ecfbadfb-83fc-4522-bf78-f1c4a3671f0e}">
+      <Declaration><![CDATA[// Port number of the CPU (usually 1)
+PROPERTY Port : BYTE]]></Declaration>
+      <Get Name="Get" Id="{c0c34f02-8660-4a20-894c-e6f08b62f53f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Port:=_Port;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{b8af7c51-9636-4920-8a75-52ce0541e1f2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_Port:=Port;
+]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RackComm" Id="{c015cd38-df21-499e-844b-09a482e327db}">
+      <Declaration><![CDATA[//TRUE if the CPU is modular, i.e. a CPU with a rack design, for example a CompactLogix
+PROPERTY RackComm : BOOL]]></Declaration>
+      <Get Name="Get" Id="{b23d56fa-2a68-43e7-b725-aa6275af7ec4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RackComm:=_RackComm;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{f3b54cea-ec8d-40ca-af16-2ea6675edd18}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_RackComm:=RackComm;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="Read" Id="{71af0465-27a9-4ff3-8096-877550a71e34}">
+      <Declaration><![CDATA[METHOD Read : BOOL
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+    Error : BOOL;
+    ErrId : UDINT;
+    ErrorTxt : STRING;
+END_VAR
+VAR_INST
+    GoodCnt : UDINT;
+    BadCnt : UDINT;
+    fbRead : FB_CIP_DATA_TABLE_RDWR;
+    LastError : STRING;
+    ErrorCnt : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbRead(sNetId := _NetID,
+    sIPv4Addr := _IPv4Addr,
+    bExecute := TRUE,
+    bDataTableWrite := FALSE,
+    sSrcElementName := _ReadSource,
+    sDstElementName := _ReadDstSymbol,
+    nNumberOfElements := _NumberOfElementsToRead,
+    nLocalIndex := _LocalIndexRead,
+    nRemoteIndex := _RemoteIndexRead,
+    nSessionTimeoutMSec := _SessionTimeoutMSec,
+    nCmdTimeoutMSec := _CmdTimeoutMSec,
+    bRackComm := _RackComm,
+    nPort := _Port,
+    nSlot := _Slot,
+    bBusy =>,
+    bError => Error,
+    nErrId => ErrId);
+
+IF NOT fbRead.bBusy THEN
+    IF NOT fbRead.bError THEN
+        GoodCnt := GoodCnt + 1;
+    ELSE
+        BadCnt := BadCnt + 1;
+        LastError := F_GET_ETHERNETIP_ERROR_TEXT(fbRead.nErrId);
+    END_IF
+
+    Read := TRUE;
+    fbRead(bExecute := FALSE);
+    ErrorTxt := F_GET_ETHERNETIP_ERROR_TEXT(fbRead.nErrId);
+
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="ReadDest" Id="{9dc6ad92-29da-4ad4-84d8-335376ddd128}">
+      <Declaration><![CDATA[//Manually override the name of the variable for the destination of the read data
+//Should be a variable from the "ETHIP" GVL list
+PROPERTY ReadDest : STRING(82)]]></Declaration>
+      <Get Name="Get" Id="{e89ad59e-524b-4ee0-bb7f-ee3a004f492a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ReadDest:=_ReadDstSymbol;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{76e7cc97-a728-4ab0-beed-3517172ba6fa}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_ReadDstSymbol:=ReadDest;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ReadSource" Id="{72cdcdc8-f4ac-440a-b6e8-4ad4d6fe9805}">
+      <Declaration><![CDATA[//Name of the tag on the AB PLC
+PROPERTY ReadSource : STRING]]></Declaration>
+      <Get Name="Get" Id="{174c086c-dc9f-491f-80cb-469a44e2e5db}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ReadSource:=_ReadSource;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{c289757d-d48a-4bea-8879-dc7257c68f1e}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_ReadSource:=ReadSource;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RemoteIndexRead" Id="{c805d6b3-6c16-49c5-9134-c7258b9f33f1}">
+      <Declaration><![CDATA[PROPERTY RemoteIndexRead : WORD]]></Declaration>
+      <Get Name="Get" Id="{02a0334c-924c-4df0-abd8-1a27cf17e099}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RemoteIndexRead:=_RemoteIndexRead;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{5cad1445-08f2-410a-9380-22e87f88e5b2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_RemoteIndexRead:=RemoteIndexRead;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="RemoteIndexWrite" Id="{72f9f1d0-3f62-4cf0-8358-8a30dd064f2f}">
+      <Declaration><![CDATA[PROPERTY RemoteIndexWrite : WORD]]></Declaration>
+      <Get Name="Get" Id="{9c33c5da-4f55-42c1-89ae-aafa8cc28983}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[RemoteIndexWrite:=_RemoteIndexWrite;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{cf212dd5-f1d0-4dea-94ab-d01336cbfb0c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_RemoteIndexWrite:=RemoteIndexWrite;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="SessionTimeoutMSec" Id="{ab1d5b47-0b7c-41ae-953c-fcbf2cea6548}">
+      <Declaration><![CDATA[//Timeout for the session; the default is 30 seconds
+PROPERTY SessionTimeoutMSec : DWORD]]></Declaration>
+      <Get Name="Get" Id="{b13e30a1-02a3-45f5-a024-389e7913c739}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[SessionTimeoutMSec:=_SessionTimeoutMSec;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{0044fce0-5dfe-4da4-b63d-ca81c555513b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_SessionTimeoutMSec:=SessionTimeoutMSec;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="SetReadDest" Id="{29358fa6-2215-4f6a-a3bc-0bbbf4c22ebe}">
+      <Declaration><![CDATA[//Instead of typing the name of the variable for the destination. Get the name using the variable address.
+//Call untill returns true
+METHOD SetReadDest : BOOL
+VAR_INPUT
+    pSymbol : ANY; //Variable from the ETHIP GVL list
+END_VAR
+VAR_OUTPUT
+    Error : BOOL;
+    ErrorID : UDINT;
+    ErrorTxt : STRING;
+END_VAR
+VAR_INST
+    fbGetSymbolName : FB_ReadNameByAdr;
+    sTemp : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Gets the name of the variable
+fbGetSymbolName(pSymbol := pSymbol,
+    xRead := TRUE,
+    tTimeout := T#5S,
+    xBusy =>,
+    xError => Error,
+    udiErrId => ErrorID,
+    sSymName =>);
+
+IF NOT fbGetSymbolName.xBusy THEN
+    SetReadDest := TRUE;
+    fbGetSymbolName(xRead := FALSE);
+
+    IF NOT fbGetSymbolName.xError THEN
+        //Check if the variable is in the "ETHIP" GVL list
+        IF NOT F_Check_Symbol_In_ETHIP(sSymbolName := fbGetSymbolName.sSymName) THEN
+            Error := TRUE;
+            ErrorTxt := 'Variable is not declaired in the ETHIP GVL list';
+            RETURN;
+        END_IF
+
+        //Check if the symbol being passed in is an array index
+        IF F_CheckIsArraySymbol(sSymbolName := fbGetSymbolName.sSymName) THEN
+            //Set the local read index to the array index being passed in
+            _LocalIndexRead := TO_WORD(F_GetArrayIndexValue(sSymbolName := fbGetSymbolName.sSymName));
+            //Replace the array index in the string with "*" 
+            sTemp := F_ReplaceArrayIndexWithAsterisk(sSymbolName := fbGetSymbolName.sSymName);
+        ELSE //Not an array
+            sTemp := fbGetSymbolName.sSymName;
+        END_IF
+
+        //Length of the string has to be less than 82 characters
+        IF LEN(sTemp) > 82 THEN
+            Error := TRUE;
+            ErrorTxt := CONCAT(sTemp, '| Variable name is greater than 82 characters');
+            RETURN;
+        END_IF
+
+        _ReadDstSymbol := sTemp;
+    END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetWriteSource" Id="{8726e88b-4366-48cd-a1c4-82c6eb28bba2}">
+      <Declaration><![CDATA[//Instead of typing the name of the variable from the "ETHIP" GVL list for the source. 
+//Get the name using the variable address.
+//Call untill returns true
+METHOD SetWriteSource : BOOL;
+VAR_INPUT
+    pSymbol : ANY; //Variable from the ETHIP GVL list
+END_VAR
+VAR_OUTPUT
+    Error : BOOL;
+    ErrorID : UDINT;
+    ErrorTxt : STRING;
+END_VAR
+VAR_INST
+    fbGetSymbolName : FB_ReadNameByAdr;
+    sTemp : STRING;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Gets the name of the variable
+fbGetSymbolName(pSymbol := pSymbol,
+    xRead := TRUE,
+    tTimeout := T#5S,
+    xBusy =>,
+    xError => Error,
+    udiErrId => ErrorID,
+    sSymName =>);
+
+IF NOT fbGetSymbolName.xBusy THEN
+    SetWriteSource := TRUE;
+    fbGetSymbolName(xRead := FALSE);
+
+    IF NOT fbGetSymbolName.xError THEN
+        //Check if the variable is in the "ETHIP" GVL list
+        IF NOT F_Check_Symbol_In_ETHIP(sSymbolName := fbGetSymbolName.sSymName) THEN
+            Error := TRUE;
+            ErrorTxt := 'Variable is not declaired in the ETHIP GVL list';
+            RETURN;
+        END_IF
+
+        //Check if the symbol being passed in is an array index
+        IF F_CheckIsArraySymbol(sSymbolName := fbGetSymbolName.sSymName) THEN
+            //Set the local write index to the array index being passed in
+            _LocalIndexWrite := TO_WORD(F_GetArrayIndexValue(sSymbolName := fbGetSymbolName.sSymName));
+            //Replace the 
+            sTemp := F_ReplaceArrayIndexWithAsterisk(sSymbolName := fbGetSymbolName.sSymName);
+        ELSE //Not an array
+            sTemp := fbGetSymbolName.sSymName;
+        END_IF
+
+        //Length of the string has to be less than 82 characters
+        IF LEN(sTemp) > 82 THEN
+            Error := TRUE;
+            ErrorTxt := CONCAT(sTemp, '| Variable name is greater than 82 characters');
+            RETURN;
+        END_IF
+
+        _WriteSourceSymbol := sTemp;
+
+    END_IF
+
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Slot" Id="{6c34c744-2bee-440e-9aea-4c876c18487f}">
+      <Declaration><![CDATA[//Slot number if the CPU is not plugged into slot 0
+PROPERTY Slot : BYTE]]></Declaration>
+      <Get Name="Get" Id="{a3e094a5-50c7-4e39-bfda-cfc29d3d74b6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Slot:=_Slot;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{de826031-5110-4700-abd5-d3f0ce87b57b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_Slot:=Slot;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="Write" Id="{386cf1f5-2fcb-4cce-b01b-2a51c195cee8}">
+      <Declaration><![CDATA[//Write Data to the target, call untill returns true
+METHOD PUBLIC Write : BOOL
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+    Error : BOOL;
+    ErrId : UDINT;
+    ErrorTxt : STRING;
+END_VAR
+VAR_INST
+    GoodCnt : UDINT;
+    BadCnt : UDINT;
+    fbWrite : FB_CIP_DATA_TABLE_RDWR;
+    LastError : STRING;
+    ErrorCnt : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[fbWrite(sNetId := _NetID,
+    sIPv4Addr := _IPv4Addr,
+    bExecute := TRUE,
+    bDataTableWrite := TRUE,
+    sSrcElementName := _WriteSourceSymbol,
+    sDstElementName := _WriteDestination,
+    nNumberOfElements := _NumberOfElementsToWrite,
+    nLocalIndex := _LocalIndexWrite,
+    nRemoteIndex := _RemoteIndexWrite,
+    nSessionTimeoutMSec := _SessionTimeoutMSec,
+    nCmdTimeoutMSec := _CmdTimeoutMSec,
+    bRackComm := _RackComm,
+    nPort := _Port,
+    nSlot := _Slot,
+    bBusy =>,
+    bError => Error,
+    nErrId => ErrId);
+
+IF NOT fbWrite.bBusy THEN
+    IF NOT fbWrite.bError THEN
+        GoodCnt := GoodCnt + 1;
+    ELSE
+        BadCnt := BadCnt + 1;
+        LastError := F_GET_ETHERNETIP_ERROR_TEXT(fbWrite.nErrId);
+    END_IF
+
+    Write := TRUE;
+    fbWrite(bExecute := FALSE);
+    ErrorTxt := F_GET_ETHERNETIP_ERROR_TEXT(fbWrite.nErrId);
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="WriteDestination" Id="{9cbd2819-b46b-4ba9-989e-0328d213e72f}">
+      <Declaration><![CDATA[//Name of the controller tag on the AB PLC
+PROPERTY WriteDestination : STRING(82)
+]]></Declaration>
+      <Get Name="Get" Id="{d08d9325-7f2a-45ea-969b-8b68672d942c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WriteDestination:=_WriteDestination;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{6df74066-dedc-437f-a86d-0e91235129f1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_WriteDestination:=WriteDestination;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="WriteSource" Id="{84b97f10-928f-42a1-b080-762fbb6008b0}">
+      <Declaration><![CDATA[//Manually override the name of the source variable to be written
+//Should be a variable from the "ETHIP" GVL list
+PROPERTY WriteSource : STRING(82)]]></Declaration>
+      <Get Name="Get" Id="{54767a11-fb41-4b8b-bbd9-9dcebe54a1ee}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[WriteSource:=_WriteSourceSymbol;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{f164894a-d70d-4c15-8828-c2e363f0475f}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_WriteSourceSymbol:=WriteSource;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="FB_CIP_Client">
+      <LineId Id="329" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.CmdTimeoutMSec.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.CmdTimeoutMSec.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.IPv4Addr.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.IPv4Addr.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.LocalIndexRead.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.LocalIndexRead.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.LocalIndexWrite.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.LocalIndexWrite.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.NetId.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.NetId.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.NumberOfElementsToRead.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.NumberOfElementsToRead.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.NumberOfElementsToWrite.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.NumberOfElementsToWrite.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.Port.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.Port.Set">
+      <LineId Id="2" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.RackComm.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.RackComm.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.Read">
+      <LineId Id="86" Count="29" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.ReadDest.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.ReadDest.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.ReadSource.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.ReadSource.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.RemoteIndexRead.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.RemoteIndexRead.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.RemoteIndexWrite.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.RemoteIndexWrite.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.SessionTimeoutMSec.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.SessionTimeoutMSec.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.SetReadDest">
+      <LineId Id="171" Count="39" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.SetWriteSource">
+      <LineId Id="204" Count="42" />
+      <LineId Id="17" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.Slot.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.Slot.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.Write">
+      <LineId Id="94" Count="29" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.WriteDestination.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.WriteDestination.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.WriteSource.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CIP_Client.WriteSource.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

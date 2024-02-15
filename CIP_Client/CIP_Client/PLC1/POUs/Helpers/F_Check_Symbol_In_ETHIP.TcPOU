@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_Check_Symbol_In_ETHIP" Id="{b164eced-4e27-4d9a-8f28-d3d306970ac3}" SpecialFunc="None">
+    <Declaration><![CDATA[//returns true if part of the "ETHIP" GVL List.
+FUNCTION F_Check_Symbol_In_ETHIP : BOOL
+VAR_INPUT
+    sSymbolName : STRING;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF LEFT(sSymbolName, 6) = 'ETHIP.' THEN
+    F_Check_Symbol_In_ETHIP := TRUE;
+ELSE
+    F_Check_Symbol_In_ETHIP := FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="F_Check_Symbol_In_ETHIP">
+      <LineId Id="32" Count="3" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

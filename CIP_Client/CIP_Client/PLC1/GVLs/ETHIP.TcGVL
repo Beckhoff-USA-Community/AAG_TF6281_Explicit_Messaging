@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="ETHIP" Id="{3c57c93c-4218-4284-9f95-02e0adba2ea9}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+    //"Client" variables for TwinCAT to initiate read and writes
+    //Ensure there are no memory overlaps when assigning a memory address
+
+    //Single struct example - used in "Simple Example"
+    PLC1_Inputs AT %MB0 : ST_CIP_COMS; //Source of data to be written to AB from TC
+    PLC1_Outputs AT %MB396 : ST_CIP_COMS; //Destination of data read from AB
+	
+    //Array of strucutre example used in  "Extended Example"
+    arPLC_Inputs AT %MB1000 : ARRAY[0..1] OF ST_CIP_COMS; //Source of data to be written to AB from TC
+    arPLC_Outputs AT %MB2000 : ARRAY[0..1] OF ST_CIP_COMS; //Destination of data read from AB	
+	
+	//Single Array Example - used in "Kepware Example"
+    KepwareInputs : ARRAY[0..249] OF DINT; //Source of data to be written to Kepware
+    KepwareOutputs :  ARRAY[0..249] OF DINT; //Destination of data read from Kepware
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

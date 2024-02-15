@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_ScannerDevStateToString" Id="{30befc64-fe68-4ec3-a7e9-afee479995e8}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_ScannerDevStateToString : STRING
+VAR_INPUT
+    DevState : UINT;
+END_VAR
+VAR
+    sOut : STRING;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE DevState OF
+
+    16#0001:
+        sOut := 'Link error';
+    16#0010:
+        sOut := 'Out of send resources (I/O reset required)';
+    16#0020:
+        sOut := 'Watchdog triggered';
+    16#4000:
+        sOut := 'Master has no valid IP Addr - pending DHCP request';
+    16#2000:
+        sOut := 'TCP server: unable TO listen on local EtherNet/IP Port (44818)';
+    16#1000:
+        sOut := 'UDP server: unable TO listen on local EtherNet/IP Port (44818)';
+
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="F_ScannerDevStateToString">
+      <LineId Id="44" Count="14" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

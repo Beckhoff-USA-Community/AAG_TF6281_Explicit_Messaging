@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ReadNameByAdr" Id="{f5116517-331b-4dda-8864-c820b2ee5e4e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ReadNameByAdr
+VAR_INPUT
+    pSymbol : ANY;
+    xRead : BOOL;
+    tTimeout : TIME := T#5S;
+END_VAR
+VAR_OUTPUT
+    xBusy : BOOL;
+    xError : BOOL;
+    udiErrId : UDINT;
+    sSymName : T_MaxString;
+END_VAR
+VAR
+    fbAdsRWEx : ADSRDWRTEX;
+    stADRInfo : ST_SymAddrInfo;
+    fbRT : R_TRIG;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbRT(CLK := xRead);
+
+IF fbRT.Q THEN
+    xBusy := TRUE;
+    xError := FALSE;
+    udiErrId := 0;
+
+    stADRInfo.pSymAddr := pSymbol.pValue;
+    stADRInfo.cbSymSize := TO_UDINT(pSymbol.diSize);
+    MEMSET(ADR(sSymName), 0, SIZEOF(sSymName));
+
+    fbAdsRWEx(WRTRD := FALSE);
+    fbAdsRWEx(NETID := '',
+        PORT := _AppInfo.AdsPort,
+        IDXGRP := 16#40A1,
+        IDXOFFS := 0,
+        DESTADDR := ADR(sSymName),
+        READLEN := SIZEOF(sSymName),
+        SRCADDR := ADR(stADRInfo),
+        WRITELEN := SIZEOF(stADRInfo),
+        WRTRD := TRUE,
+        TMOUT := tTimeout);
+ELSE
+    fbAdsRWEx(WRTRD := FALSE, BUSY => xBusy, ERR => xError, ERRID => udiErrID);
+END_IF
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ReadNameByAdr">
+      <LineId Id="66" Count="24" />
+      <LineId Id="49" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

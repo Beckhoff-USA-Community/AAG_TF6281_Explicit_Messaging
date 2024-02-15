@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_CIP_COMS" Id="{12607d29-7fbc-4d5a-9695-a6a5569cef7d}">
+    <Declaration><![CDATA[//Esnure that the data size, and data type name are the same on both sides.
+//Was not able to make BOOL or ARRAY OF BOOL work. 
+//Pack bits into other data types as needed
+TYPE
+    ST_CIP_COMS :
+    STRUCT
+        _REAL : REAL;
+        _STRING : RSL5K_STRING;
+        _INT : INT;
+        _DINT : DINT;
+        _ArrayREAL : ARRAY[0..2] OF REAL;
+        _ArraySTRING : ARRAY[0..2] OF RSL5K_STRING;
+        _ArrayINT : ARRAY[0..2] OF INT;
+        _ArrayDINT : ARRAY[0..2] OF DINT;
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

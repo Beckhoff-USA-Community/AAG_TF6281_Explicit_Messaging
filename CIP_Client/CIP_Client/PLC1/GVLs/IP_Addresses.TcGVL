@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="IP_Addresses" Id="{087cdd05-e22d-46de-994e-46659c77480f}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+	CompactLogix_1769_L16ER : STRING := '192.168.40.36';
+	Kepware_Server : STRING := '192.168.40.11';
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

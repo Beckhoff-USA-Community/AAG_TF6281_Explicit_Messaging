@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="IO" Id="{991e2eeb-f513-4123-a25c-509d1df84c66}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL
+    ScannerDevState AT %I* : UINT; //Linked to Device 1 (TC3 EIP Scanner)-.DevState
+    ScannerAmsNetID AT %I* : AMSNETID; //Linked to Device 1 (TC3 EIP Scanner)->InfoData->AmsNetId.	    
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
